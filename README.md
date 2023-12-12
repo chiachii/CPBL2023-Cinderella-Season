@@ -11,11 +11,11 @@ This year, WeiChuan Dragons (味全龍) in the Chinese Professional Baseball Lea
 
 ## How to Use
 1. **Clone the Repository:** Start by cloning this repository to your local machine.
-   ```bash
+   ```bash=
    git clone https://github.com/your-username/CPBL2023-Cinderella-Season.git
    ```
-2. Explore the Data: Open the visualization system in your preferred web browser to start exploring CPBL 2023 data.
-3. Customize and Contribute: Feel free to customize the visualizations or contribute improvements. We welcome collaboration and new ideas!
+2. **Explore the Data:** Open the visualization system in your preferred web browser to start exploring CPBL 2023 data.
+3. **Customize and Contribute:** Feel free to customize the visualizations or contribute improvements. We welcome collaboration and new ideas!
 
 ## Requirements
 - Web browser with JavaScript enabled
