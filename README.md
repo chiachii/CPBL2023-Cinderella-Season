@@ -22,7 +22,7 @@ This year, WeiChuan Dragons (味全龍) in the Chinese Professional Baseball Lea
 - Python (for customization and development)
 
 ## Get Involved
-- Found a bug? Have a suggestion? Open an [issue](https://github.com/your-username/CPBL2023-Cinderella-Season/issues).
-- Want to contribute? Fork the repository and submit a [pull request](https://github.com/your-username/CPBL2023-Cinderella-Season/pulls).
+- Found a bug? Have a suggestion? Open an [issue](https://github.com/chiachii/CPBL2023-Cinderella-Season/issues).
+- Want to contribute? Fork the repository and submit a [pull request](https://github.com/chiachii/CPBL2023-Cinderella-Season/pulls).
 
 Let's unravel the fascinating stories hidden within CPBL 2023 together! ⚾️📈
