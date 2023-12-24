@@ -17,7 +17,25 @@
                 <p class="card-header-title"> Demo: Matrix Plot </p>
             </header>
             <div class="card-content">
-                <!-- main framework -->
+                <!-- double range slider -->
+                <div class="range">
+                    <div class="range-title">
+                        <label> Session </label>
+                    </div>
+                    <div class="range-slider">
+                        <span class="range-selected"></span>
+                    </div>
+                    <div class="range-input">
+                        <input type="range" id="session-min-slider" min="0" max="300" step="1" value="0">
+                        <input type="range" id="session-max-slider" min="0" max="300" step="1" value="300">
+                    </div>
+                    <div class="range-value">
+                        <span id="slider-min-value">0</span>
+                        <span> : </span>
+                        <span id="slider-max-value">300</span>
+                    </div>
+                </div>
+                <!-- main diagram -->
                 <div id="matrix"></div>
             </div>
         </div>

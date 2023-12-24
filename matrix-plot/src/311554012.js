@@ -1,9 +1,53 @@
 // Load the dataset
 d3.csv('../data/schedule.csv').then(data => {
-    // Initialization
-    let session = 300
-    console.log(data);
-    render_matrix(data.filter(d => d.session <= session));
+    // Initial settings
+    let sessionMin = 0;
+    let sessionMax = 300;
+    const range = document.querySelector('.range-selected');
+    const rangeInput = document.querySelectorAll('.range-input input');
+
+    // Render the matrix initially
+    renderMatrix(data.filter(d => d.session >= sessionMin && d.session <= sessionMax));
+    
+    // Add Event Listener on `.range-input`: for changing slider style
+    rangeInput.forEach((input) => {
+        input.addEventListener('input', (e) => {
+            let minRange = parseInt(rangeInput[0].value);
+            let maxRange = parseInt(rangeInput[1].value);
+            if (maxRange - minRange < 1) {     
+                if (e.target.className === 'min') {
+                    rangeInput[0].value = maxRange - 1;
+                } else {
+                    rangeInput[1].value = minRange + 1;        
+                }
+            } else {
+                range.style.left = (minRange / rangeInput[0].max) * 100 + '%';
+                range.style.right = 100 - (maxRange / rangeInput[1].max) * 100 + '%';
+            }
+        });
+    });
+
+    // Add Event Listener on `.range-input`: for changing `.range-value`
+    d3.select('#session-min-slider').on('input', function() {
+        sessionMin = +this.value;
+        if (sessionMin < sessionMax) {
+            d3.select('#slider-min-value').text(sessionMin);
+        };
+        ['g', 'rect', 'image', 'text'].forEach(item => {
+            matrix_svg.selectAll(item).remove();
+        });
+        renderMatrix(data.filter(d => d.session >= sessionMin && d.session <= sessionMax));
+    });
+    d3.select('#session-max-slider').on('input', function() {
+        sessionMax = +this.value;
+        if (sessionMin < sessionMax) {
+            d3.select('#slider-max-value').text(sessionMax);
+        };
+        ['g', 'rect', 'image', 'text'].forEach(item => {
+            matrix_svg.selectAll(item).remove();
+        });
+        renderMatrix(data.filter(d => d.session >= sessionMin && d.session <= sessionMax));
+    });
 });
 
 // Define the SVG dimensions and margins 
@@ -20,7 +64,7 @@ const matrix_svg = d3.select('#matrix')
     .attr('transform', `translate(${matrix_margin.left}, ${matrix_margin.top})`);
 
 // Main Function
-const render_matrix = (data) => {
+const renderMatrix = (data) => {
     // Data preprocessing
     teamOrder = ['中信兄弟', '樂天桃猿', '統一獅', '味全龍', '富邦悍將']
     matrixData = [];
@@ -31,7 +75,7 @@ const render_matrix = (data) => {
         }
 
         // Summary of the record of input data
-        const result = game.team_win === game.team_home ? "home" : "away";
+        const result = game.team_win === game.team_home ? 'home' : 'away';
         const existingRecord = matrixData.find(record => record.x === game.team_home && record.y === game.team_away);
         if (existingRecord) {
             existingRecord[result]++;
@@ -57,7 +101,7 @@ const render_matrix = (data) => {
         };
         matrixData.push(newRecord);
     });
-    console.log(matrixData);
+    // console.log(matrixData);
 
     // Create scales for X and Y axes
     const xScale = d3.scalePoint()
@@ -75,15 +119,30 @@ const render_matrix = (data) => {
             .append('g')
             .attr('class', 'grid')
             .attr('transform', d => `translate(${xScale(d.x)}, ${yScale(d.y)})`);
+    
+    // Plot the grid 
+    teamOrder.forEach(t1 => {
+        teamOrder.forEach(t2 => {
+            matrix_svg.append('rect')
+                .attr('width', matrix_width/4)
+                .attr('height', matrix_height/4)
+                .attr('x', -matrix_width/8)
+                .attr('y', -matrix_height/8)
+                .style('fill', 'none')
+                .style('stroke', 'lightgray')
+                .style('stroke-width', '1px')
+                .attr('transform', d => `translate(${xScale(t1)}, ${yScale(t2)})`);
+        });
+    });
 
-        grid.append('rect')
-            .attr('width', matrix_width/4)
-            .attr('height', matrix_height/4)
-            .attr('x', -matrix_width/8)
-            .attr('y', -matrix_height/8)
-            .style('fill', 'none')
-            .style('stroke', 'lightgray')
-            .style('stroke-width', '1px');
+        // grid.append('rect')
+        //     .attr('width', matrix_width/4)
+        //     .attr('height', matrix_height/4)
+        //     .attr('x', -matrix_width/8)
+        //     .attr('y', -matrix_height/8)
+        //     .style('fill', 'none')
+        //     .style('stroke', 'lightgray')
+        //     .style('stroke-width', '1px');
     
     // Diagonal: add team logo
     const translate = {'中信兄弟': 'brothers', '樂天桃猿': 'rakuten', '統一獅': 'unilions', '味全龍': 'dragons', '富邦悍將': 'fubon'}
@@ -125,7 +184,7 @@ const render_matrix = (data) => {
                 // Add circles
                 group.append('circle')
                     .attr('r', function(d) {
-                        return (d.away / (d.home + d.away)) * 30 + (d.away > 0 ? 10 : 0);
+                        return (d.away / (d.home + d.away)) * 35 + (d.away > 0 ? 5 : 0);
                     })
                     .style('fill', d => colorScale(false, d.home, d.away));
 
@@ -154,7 +213,7 @@ const render_matrix = (data) => {
                 // Add circles
                 group.append('circle')
                     .attr('r', function(d) {
-                        return (d.home / (d.home + d.away)) * 30 + (d.home > 0 ? 10 : 0);
+                        return (d.home / (d.home + d.away)) * 35 + (d.home > 0 ? 5 : 0);
                     })
                     .style('fill', d => colorScale(true, d.home, d.away));
 
