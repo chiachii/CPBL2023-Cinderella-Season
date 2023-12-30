@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Matrix Plot</title>
+    <link rel="stylesheet" href="./311554012.css">
+    <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title"> CPBL 2023 Cinderella Season </h1>
+    </div>
+    <div class="container">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title"> Demo: Dot Plot </p>
+            </header>
+            <div class="card-content">
+                <!-- main diagram -->
+                <div class="df-ov">
+                    <!-- Dropdown menu for team selection -->
+                    <div class="fs-12">
+                        <label for="team-selector">Select Team:</label>
+                        <select id="team-selector">
+                            <option value="中信兄弟"> 中信兄弟 </option>
+                            <option value="樂天桃猿"> 樂天桃猿 </option>
+                            <option value="統一獅"> 統一獅 </option>
+                            <option value="味全龍"> 味全龍 </option>
+                            <option value="富邦悍將"> 富邦悍將 </option>
+                        </select>
+                    </div>
+                    <!-- legend -->
+                    <span class="legend">
+                        <span>BA: weak (0.0) &thinsp;</span>
+                        <div class="ba-0 elem-lengend"></div>
+                        <div class="ba-1 elem-lengend"></div>
+                        <div class="ba-2 elem-lengend"></div>
+                        <div class="ba-3 elem-lengend"></div>
+                        <div class="ba-4 elem-lengend"></div>
+                        <div class="ba-5 elem-lengend"></div>
+                        <span> &thinsp; (0.5) strong</span>
+                    </span>
+                    <span class="legend"> &thinsp; / &thinsp; </span>
+                    <span class="legend">
+                        <span>ERA: best (0.0) &thinsp;</span>
+                        <div class="era-0 elem-lengend"></div>
+                        <div class="era-1 elem-lengend"></div>
+                        <div class="era-2 elem-lengend"></div>
+                        <div class="era-3 elem-lengend"></div>
+                        <div class="era-4 elem-lengend"></div>
+                        <div class="era-5 elem-lengend"></div>
+                        <div class="era-6 elem-lengend"></div>
+                        <div class="era-7 elem-lengend"></div>
+                        <div class="era-8 elem-lengend"></div>
+                        <div class="era-9 elem-lengend"></div>
+                        <span> &thinsp; (21+) worst</span>
+                    </span>
+                    <!-- block dot chart -->
+                    <div id="parent"></div>
+                    <!-- X-axis -->
+                    <span class="legend"> X-Axis: N-th Game (1 ~ 120)</span>
+                </div>
+                <div id="tooltip"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./311554012.js"></script>
+</body>
+</html>

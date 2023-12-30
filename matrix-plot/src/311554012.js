@@ -109,7 +109,7 @@ const renderMatrix = (data) => {
         };
         matrixData.push(newRecord);
     });
-    console.log(matrixData);
+    // console.log(matrixData);
 
     // Create scales for X and Y axes
     const xScale = d3.scalePoint()
