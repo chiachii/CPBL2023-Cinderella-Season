@@ -107,4 +107,54 @@ const renderLine = (data) => {
                 .y(d => +d.value == 0 ? yScale(0) : yScale(Math.abs(6 - +d.value))) // Adjust the y value accordingly
                 (d[1])
             );
+
+    // Create a vertical line for tooltip
+    const verticalLine = line_svg.append('line')
+        .attr('class', 'vertical-line')
+        .style('stroke', 'green')
+        .style('stroke-dasharray', '3, 3')
+        .attr('stroke-width', 1)
+        .style('pointer-events', 'none')
+        .attr('y1', 0)
+        .attr('y2', line_height);
+    
+    // Show the date based on mouse event
+    const infoElement = line_svg.append('text')
+        .attr('class', 'info-text')
+        .attr('x', 10)
+        .attr('y', 10)
+        .style('pointer-events', 'none');
+    // Show the ranking based on mouse event
+    const rankLabel = d3.select('#rank-label')
+
+    // Add tooltip events
+    line_svg.on('mouseover', () => {
+            verticalLine.style('display', null);
+            infoElement.style('display', null);
+            rankLabel.style('display', null);
+        })
+        .on('mouseout', () => {
+            verticalLine.style('display', 'none');
+            infoElement.style('display', 'none');
+            rankLabel.style('display', 'none');
+        })
+        .on('mousemove', mousemove);
+    
+    function mousemove(event) {
+        const mouseX = d3.pointer(event)[0] - 15; // Adjust for translation
+        verticalLine.attr('transform', `translate(${mouseX+15}, 0)`);
+
+        // Show the corresponding session value
+        const sessionValue = Math.round(xScale.invert(mouseX));
+        infoElement.text(`${sessionValue}`)
+                    .style('fill', 'green')
+                    .style('font-size', '12px')
+                    .attr('transform', `translate(${mouseX}, ${line_height+15})`);
+
+        // Display values for the corresponding X coordinate in the console
+        const dataForX = data.filter(d => +d.session === sessionValue).sort((a, b) => +a.value - +b.value);
+        rankLabel.text(`
+            排名：${dataForX[0]['team']} > ${dataForX[1]['team']} > ${dataForX[2]['team']} > ${dataForX[3]['team']} > ${dataForX[4]['team']} 
+        `);
+    };
 };
