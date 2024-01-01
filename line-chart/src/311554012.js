@@ -101,7 +101,7 @@ const renderLine = (data) => {
         .join('path')
             .attr('fill', 'none')
             .attr('stroke', d => colorScale(d[0]))
-            .attr('stroke-width', 1.5)
+            .attr('stroke-width', 2)
             .attr('d', d => d3.line()  // Invoke d3.line() here
                 .x(d => 15 + xScale(d.session))
                 .y(d => +d.value == 0 ? yScale(0) : yScale(Math.abs(6 - +d.value))) // Adjust the y value accordingly
@@ -136,7 +136,13 @@ const renderLine = (data) => {
         .on('mouseout', () => {
             verticalLine.style('display', 'none');
             infoElement.style('display', 'none');
-            rankLabel.style('display', 'none');
+            rankLabel.html(`
+                <span> <i class="fa fa-square" style="color:#FFD306"></i> 中信兄弟 </span>
+                <span> <i class="fa fa-square" style="color:#930000"></i> 樂天桃猿 </span>
+                <span> <i class="fa fa-square" style="color:#FF9224"></i> 統一獅 </span>
+                <span> <i class="fa fa-square" style="color:#FF7575"></i> 味全龍 </span>
+                <span> <i class="fa fa-square" style="color:#0066CC"></i> 富邦悍將 </span>
+            `);
         })
         .on('mousemove', mousemove);
     
@@ -153,8 +159,13 @@ const renderLine = (data) => {
 
         // Display values for the corresponding X coordinate in the console
         const dataForX = data.filter(d => +d.session === sessionValue).sort((a, b) => +a.value - +b.value);
-        rankLabel.text(`
-            排名：${dataForX[0]['team']} > ${dataForX[1]['team']} > ${dataForX[2]['team']} > ${dataForX[3]['team']} > ${dataForX[4]['team']} 
+        rankLabel.html(`
+            <strong style="color: #000000"> 排名： </strong>
+            <strong style="color:${colorScale(dataForX[0]['team'])}"> ${dataForX[0]['team']} </strong> > 
+            <strong style="color:${colorScale(dataForX[1]['team'])}"> ${dataForX[1]['team']} </strong> > 
+            <strong style="color:${colorScale(dataForX[2]['team'])}"> ${dataForX[2]['team']} </strong> > 
+            <strong style="color:${colorScale(dataForX[3]['team'])}"> ${dataForX[3]['team']} </strong> > 
+            <strong style="color:${colorScale(dataForX[4]['team'])}"> ${dataForX[4]['team']} </strong> 
         `);
     };
 };
