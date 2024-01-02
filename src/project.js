@@ -1,36 +1,43 @@
+/*
+=========================================================================
+javascript for each team bar plot
+=========================================================================
+*/
 //Data preprocessing for Batting
-var player_data_BA = [];
 var W_team_bat = [];
-var W_start_b = "";
-var W_end_b = "";
 var C_team_bat = [];
-var C_start_b = "";
-var C_end_b = "";
 var L_team_bat = [];
-var L_start_b = "";
-var L_end_b = "";
 var T_team_bat = [];
-var T_start_b = "";
-var T_end_b = "";
 var F_team_bat = [];
-var F_start_b = "";
-var F_end_b = "";
 
 var W_avg_b = 0;
 var L_avg_b = 0;
 var C_avg_b = 0;
 var T_avg_b = 0;
 var F_avg_b = 0;
-var player_batting_url = "../dataset/bar-chart/data/player_bat.csv";
-//Name,Team 
+var batching_columns;
+var batting_table_dataset = [];
+var bat_w_table_dataset = [];
+var bat_c_table_dataset = [];
+var bat_l_table_dataset = [];
+var bat_t_table_dataset = [];
+var bat_f_table_dataset = [];
+
+/*
 //AVG或BA(打擊率)	batting average	安打數÷打數
 //安打: H(hit)
 //打數: AB(at bat)
+*/
+
+// sorting function
 function sorting_by_BA(a, b) {
     return a.BA - b.BA;
-};
+}
 
+// for team bar chart
+var player_batting_url = "../dataset/bar-chart/data/player_bat.csv";
 d3.csv(player_batting_url).then(data_bat => {
+    batching_columns = Object.keys(data_bat[0]);
     data_bat.forEach(d => {
         //Name,Team
         d.H = +d.H;
@@ -41,6 +48,7 @@ d3.csv(player_batting_url).then(data_bat => {
         if (isNaN(batting_average)) {
             batting_average = 0;
         }
+        // 只存取有打數為>0的選手
         if (!isNaN(batting_average) & d.AB > 0) {
             if (d.Team_Name === "味全") {
                 W_team_bat.push({ region: d.Team_Name, p_name: d.Name, BA: batting_average });
@@ -62,479 +70,221 @@ d3.csv(player_batting_url).then(data_bat => {
                 F_team_bat.push({ region: d.Team_Name, p_name: d.Name, BA: batting_average });
                 F_avg_b = F_avg_b + batting_average;
             }
+            var temp = [];
+            batching_columns.forEach(col => {
+                if (col === 'H') {
+                    temp.push(String(d[col]));
+                }
+                else if (col === 'AB') {
+                    temp.push(String(d[col]));
+                }
+                else {
+                    temp.push(d[col]);
+                }
+
+            });
+            batting_table_dataset.push(temp);
+            if (d.Team_Name === "味全") {
+                bat_w_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "統一") {
+                bat_t_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "中信") {
+                bat_c_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "樂天") {
+                bat_l_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "富邦") {
+                bat_f_table_dataset.push(temp);
+            }
         }
 
     });
+    //sorting
+    var CPBL_bat_avg = W_avg_b + L_avg_b + T_avg_b + C_avg_b + F_avg_b;
     W_team_bat.sort(sorting_by_BA);
-    W_start_b = W_team_bat[0]["p_name"];
-    W_end_b = W_team_bat[W_team_bat.length - 1]["p_name"];
     W_avg_b = W_avg_b / W_team_bat.length;
 
     L_team_bat.sort(sorting_by_BA);
-    L_start_b = L_team_bat[0]["p_name"];
-    L_end_b = L_team_bat[L_team_bat.length - 1]["p_name"];
     L_avg_b = L_avg_b / L_team_bat.length;
 
     T_team_bat.sort(sorting_by_BA);
-    T_start_b = T_team_bat[0]["p_name"];
-    T_end_b = T_team_bat[T_team_bat.length - 1]["p_name"];
     T_avg_b = T_avg_b / T_team_bat.length;
 
     C_team_bat.sort(sorting_by_BA);
-    C_start_b = C_team_bat[0]["p_name"];
-    C_end_b = C_team_bat[C_team_bat.length - 1]["p_name"];
     C_avg_b = C_avg_b / C_team_bat.length;
 
     F_team_bat.sort(sorting_by_BA);
-    F_start_b = F_team_bat[0]["p_name"];
-    F_end_b = F_team_bat[F_team_bat.length - 1]["p_name"];
     F_avg_b = F_avg_b / F_team_bat.length;
 
-    F_team_bat.forEach(p => {
-        player_data_BA.push(p);
-    });
+    CPBL_bat_avg = CPBL_bat_avg / (W_team_bat.length + L_team_bat.length + T_team_bat.length + C_team_bat.length + F_team_bat.length);
 
-    T_team_bat.forEach(p => {
-        player_data_BA.push(p);
-    });
-    C_team_bat.forEach(p => {
-        player_data_BA.push(p);
-    });
-    L_team_bat.forEach(p => {
-        player_data_BA.push(p);
-    });
+    W_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": W_avg_b });
+    W_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    count = 0;
-    W_team_bat.forEach(p => {
-        player_data_BA.push(p);
-    });
-    player_data_BA.push({ region: "AVG", p_name: "富邦", BA: F_avg_b });
-    player_data_BA.push({ region: "AVG", p_name: "統一", BA: T_avg_b });
-    player_data_BA.push({ region: "AVG", p_name: "中信", BA: C_avg_b });
-    player_data_BA.push({ region: "AVG", p_name: "樂天", BA: L_avg_b });
-    player_data_BA.push({ region: "AVG", p_name: "味全", BA: W_avg_b });
+    C_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": C_avg_b });
+    C_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    W_team_bat.push({ region: "AVG", p_name: "平均", "BA": W_avg_b });
-    C_team_bat.push({ region: "AVG", p_name: "平均", "BA": C_avg_b });
-    T_team_bat.push({ region: "AVG", p_name: "平均", "BA": T_avg_b });
-    L_team_bat.push({ region: "AVG", p_name: "平均", "BA": L_avg_b });
-    F_team_bat.push({ region: "AVG", p_name: "平均", "BA": F_avg_b });
+    T_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": T_avg_b });
+    T_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    bat_bar_chart();
-    team_bat_bar_chart(C_team_bat);
+    L_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": L_avg_b });
+    L_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
+
+    F_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": F_avg_b });
+    F_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
+
+    am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", C_team_bat, "batting_average", "#FFDC35"));
+
+
+
+
 });
-function bat_bar_chart() {
-    am4core.ready(function () {
-        // Themes begin
-        am4core.useTheme(am4themes_animated);
-        // Themes end
-
-        // Create chart instance
-        var chart_bat = am4core.create("all_bat", am4charts.XYChart);
-        chart_bat.svgContainer.htmlElement.style.height = "1500" + "px";
-        chart_bat.svgContainer.htmlElement.style.width = "800" + "px";
-        // Add data
-        chart_bat.data = player_data_BA;
-        var title = chart_bat.titles.create();
-        title.text = "各球隊球員 打擊率(Batting Average)";
-        title.fontSize = 30;
-        title.marginBottom = 15;
-        // Create axes
-        var yAxis = chart_bat.yAxes.push(new am4charts.CategoryAxis());
-        yAxis.dataFields.category = "p_name";
-        yAxis.renderer.grid.template.location = 0;
-        yAxis.renderer.labels.template.fontSize = 10;
-        yAxis.renderer.minGridDistance = 10;
-
-        var xAxis = chart_bat.xAxes.push(new am4charts.ValueAxis());
-
-        // Create series
-        var series = chart_bat.series.push(new am4charts.ColumnSeries());
-        series.dataFields.valueX = "BA";
-        series.dataFields.categoryY = "p_name";
-        series.columns.template.tooltipText = "\({region}) {categoryY}: [bold]{valueX}[/]";
-        series.columns.template.strokeWidth = 0;
-        series.columns.template.adapter.add("fill", function (fill, target) {
-            if (target.dataItem) {
-                switch (target.dataItem.dataContext.region) {
-                    ////"#005AB5" "#FF8000"  "#FFDC35"  "#9E0015" "#FF0000" "#6FB7B7"
-                    case "中信":
-                        //中信
-                        return "#FFDC35";
-                        break;
-                    case "統一":
-                        //統一
-                        return "#FF8000";
-                        break;
-                    case "樂天":
-                        //樂天
-                        return "#9E0015";
-                        break;
-                    case "味全":
-                        //味全
-                        return "#FF0000";
-                        break;
-                    case "富邦":
-                        //富邦
-                        return "#005AB5";
-                        break;
-                    case "AVG":
-                        return "#01B468";
-                        break;
-
-                }
-            }
-            return fill;
-        });
-
-        var axisBreaks = {};
-        var legendData = [];
-
-        // Add ranges
-        function addRange(label, start, end, color) {
-
-            var axisBreak = yAxis.axisBreaks.create();
-            axisBreak.startCategory = start;
-            axisBreak.endCategory = end;
-            axisBreak.breakSize = 1;
-            axisBreak.fillShape.disabled = true;
-            axisBreak.startLine.disabled = true;
-            axisBreak.endLine.disabled = true;
-            axisBreaks[label] = axisBreak;
-
-            legendData.push({ name: label, fill: color });
-        }
-
-        //規定範圍: 區段名稱，區段起始資料名稱，區段終點資料名稱
-
-        //addRange("中信兄弟", "林志綱", "黃鈞麟", chart.colors.getIndex(1));
-        addRange("富邦悍將", F_end_b, F_start_b, "#005AB5");
-        addRange("統一獅", T_end_b, T_start_b, "#FF8000");
-        addRange("中信兄弟", C_end_b, C_start_b, "#FFDC35");
-        addRange("樂天桃猿", L_end_b, L_start_b, "#9E0015");
-        addRange("味全龍", "張皓緯", "吳睿勝", "#FF0000");
-        addRange("平均", "味全", "富邦", "#01B468");
-
-        chart_bat.cursor = new am4charts.XYCursor();
 
 
-        var legend = new am4charts.Legend();
-        legend.position = "top";
-        legend.scrollable = true;
-        legend.valign = "top";
-        legend.reverseOrder = true;
+// data preprocessing for pitching
+var W_team_pitch = [];
+var C_team_pitch = [];
+var L_team_pitch = [];
+var T_team_pitch = [];
+var F_team_pitch = [];
 
-        chart_bat.legend = legend;
-        legend.data = legendData;
-        var height = 2000;
-        legend.itemContainers.template.events.on("toggled", function (event) {
-            var name = event.target.dataItem.dataContext.name;
-            var axisBreak = axisBreaks[name];
-            if (event.target.isActive) {
-                axisBreak.animate({ property: "breakSize", to: 0 }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 500);
+var W_avg_p = 0;
+var L_avg_p = 0;
+var C_avg_p = 0;
+var T_avg_p = 0;
+var F_avg_p = 0;
 
-                    }
-                })
-                series.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 0, 0, ["valueX"]);
-                    }
+var pitching_columns;
+var pitching_table_dataset = [];
+var pitch_w_table_dataset = [];
+var pitch_l_table_dataset = [];
+var pitch_t_table_dataset = [];
+var pitch_c_table_dataset = [];
+var pitch_f_table_dataset = [];
 
-                })
-            }
-            else {
-                axisBreak.animate({ property: "breakSize", to: 1 }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000);
-                    }
-                })
+var player_pitching_url = "../dataset/bar-chart/data/player_pitch.csv";
+/*
+//ERA(防禦率)	error run average	ER / PA
+//安打: H(hit)
+//打數: AB(at bat)
+*/
 
-                series.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000, 0, ["valueX"]);
-                    }
-                })
-            }
-        })
-
-    }); // 
-}
-
-// for all bat player
-var player_data = [];
-var W_team_p = [];
-var W_start = "";
-var W_end = "";
-var C_team_p = [];
-var C_start = "";
-var C_end = "";
-var L_team_p = [];
-var L_start = "";
-var L_end = "";
-var T_team_p = [];
-var T_start = "";
-var T_end = "";
-var F_team_p = [];
-var F_start = "";
-var F_end = "";
-
-var W_avg = 0;
-var L_avg = 0;
-var C_avg = 0;
-var T_avg = 0;
-var F_avg = 0;
-var player_patchinging_url = "../dataset/bar-chart/player_pitch.csv";
+// sorting function
 function sorting_by_ERA(a, b) {
     return b.ERA - a.ERA;
-};
-d3.csv(player_patchinging_url).then(data => {
-    data.forEach(d => {
+}
+
+// for team pitch bar chart
+d3.csv(player_pitching_url).then(data_pitch => {
+    pitching_columns = Object.keys(data_pitch[0]);
+    data_pitch.forEach(d => {
         //Name,Team
-        d.ER = +d.ER;
         d.G = +d.G;
+        d.ER = +d.ER;
 
+        var error_run_average = (d.ER / d.G * 9);
         //存取打擊率成績
-        var error_run_avg = (d.ER / d.G);
-        if (isNaN(error_run_avg)) {
-            error_run_avg = 0;
+        if (isNaN(error_run_average)) {
+            error_run_average = 0;
         }
-        if (!isNaN(error_run_avg) && d.G > 0) {
+
+        // 只存取有投球數>0的選手
+        if (!isNaN(error_run_average) & d.G > 0) {
             if (d.Team_Name === "味全") {
-                W_team_p.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_avg });
-                W_avg = W_avg + error_run_avg;
+                W_team_pitch.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_average });
+                W_avg_p = W_avg_p + error_run_average;
             }
-            //
-            else if (d.Team_Name == "統一") {
-                if (d.Name == "林子崴") {
-                    d.Name = "林子崴(統一)";
+            else if (d.Team_Name === "統一") {
+                T_team_pitch.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_average });
+                T_avg_p = T_avg_p + error_run_average;
+            }
+            else if (d.Team_Name === "樂天") {
+                L_team_pitch.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_average });
+                L_avg_p = L_avg_p + error_run_average;
+            }
+            else if (d.Team_Name === "中信") {
+                C_team_pitch.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_average });
+                C_avg_p = C_avg_p + error_run_average;
+            }
+            else if (d.Team_Name === "富邦") {
+                F_team_pitch.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_average });
+                F_avg_p = F_avg_p + error_run_average;
+            }
+
+            var temp = [];
+            pitching_columns.forEach(col => {
+                if (col === 'G') {
+                    temp.push(String(d[col]));
                 }
-                T_team_p.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_avg });
-                T_avg = T_avg + error_run_avg;
-            }
-            else if (d.Team_Name == "樂天") {
-                if (d.Name == "林子崴") {
-                    d.Name = "林子崴(樂天)";
+                else if (col === 'ER') {
+                    temp.push(String(d[col]));
                 }
-                L_team_p.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_avg });
-                L_avg = L_avg + error_run_avg;
+                else {
+                    temp.push(d[col]);
+                }
+
+            });
+            pitching_table_dataset.push(temp);
+            if (d.Team_Name === "味全") {
+                pitch_w_table_dataset.push(temp);
             }
-            else if (d.Team_Name == "中信") {
-                C_team_p.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_avg });
-                C_avg = C_avg + error_run_avg;
+            else if (d.Team_Name === "統一") {
+                pitch_t_table_dataset.push(temp);
             }
-            else if (d.Team_Name == "富邦") {
-                F_team_p.push({ region: d.Team_Name, p_name: d.Name, ERA: error_run_avg });
-                F_avg = F_avg + error_run_avg;
+            else if (d.Team_Name === "中信") {
+                pitch_c_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "樂天") {
+                pitch_l_table_dataset.push(temp);
+            }
+            else if (d.Team_Name === "富邦") {
+                pitch_f_table_dataset.push(temp);
             }
         }
 
     });
-    W_team_p.sort(sorting_by_ERA);
-    W_start = W_team_p[0]["p_name"];
-    W_end = W_team_p[W_team_p.length - 1]["p_name"];
-    W_avg = W_avg / W_team_p.length;
+    //sorting
+    var CPBL_pitch_avg = W_avg_p + L_avg_p + T_avg_p + C_avg_p + F_avg_p;
+    W_team_pitch.sort(sorting_by_ERA);
+    W_avg_p = W_avg_p / W_team_pitch.length;
 
-    L_team_p.sort(sorting_by_ERA);
-    L_start = L_team_p[0]["p_name"];
-    L_end = L_team_p[L_team_p.length - 1]["p_name"];
-    L_avg = L_avg / L_team_p.length;
+    L_team_pitch.sort(sorting_by_ERA);
+    L_avg_p = L_avg_p / L_team_pitch.length;
 
-    T_team_p.sort(sorting_by_ERA);
-    T_start = T_team_p[0]["p_name"];
-    T_end = T_team_p[T_team_p.length - 1]["p_name"];
-    T_avg = T_avg / T_team_p.length;
+    T_team_pitch.sort(sorting_by_ERA);
+    T_avg_p = T_avg_p / T_team_pitch.length;
 
-    C_team_p.sort(sorting_by_ERA);
-    C_start = C_team_p[0]["p_name"];
-    C_end = C_team_p[C_team_p.length - 1]["p_name"];
-    C_avg = C_avg / C_team_p.length;
+    C_team_pitch.sort(sorting_by_ERA);
+    C_avg_p = C_avg_p / C_team_pitch.length;
 
-    F_team_p.sort(sorting_by_ERA);
-    F_start = F_team_p[0]["p_name"];
-    F_end = F_team_p[F_team_p.length - 1]["p_name"];
-    F_avg = F_avg / F_team_p.length;
+    F_team_pitch.sort(sorting_by_ERA);
+    F_avg_p = F_avg_p / F_team_pitch.length;
 
-    F_team_p.forEach(p => {
-        player_data.push(p);
-    });
+    CPBL_pitch_avg = CPBL_pitch_avg / (W_team_pitch.length + L_team_pitch.length + T_team_pitch.length + C_team_pitch.length + F_team_pitch.length);
 
-    T_team_p.forEach(p => {
-        player_data.push(p);
-    });
-    C_team_p.forEach(p => {
-        player_data.push(p);
-    });
-    L_team_p.forEach(p => {
-        player_data.push(p);
-    });
-    W_team_p.forEach(p => {
-        player_data.push(p);
-    });
 
-    player_data.push({ "region": "AVG", "p_name": "富邦", "ERA": F_avg });
-    player_data.push({ "region": "AVG", "p_name": "統一", "ERA": T_avg });
-    player_data.push({ "region": "AVG", "p_name": "中信", "ERA": C_avg });
-    player_data.push({ "region": "AVG", "p_name": "樂天", "ERA": L_avg });
-    player_data.push({ "region": "AVG", "p_name": "味全", "ERA": W_avg });
+    W_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": W_avg_p });
+    W_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
-    W_team_p.push({ region: "AVG", p_name: "平均", "ERA": W_avg });
-    C_team_p.push({ region: "AVG", p_name: "平均", "ERA": C_avg });
-    T_team_p.push({ region: "AVG", p_name: "平均", "ERA": T_avg });
-    L_team_p.push({ region: "AVG", p_name: "平均", "ERA": L_avg });
-    F_team_p.push({ region: "AVG", p_name: "平均", "ERA": F_avg });
-    pitch_bar_chart();
-    team_pitch_bar_chart(C_team_p);
+    C_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": C_avg_p });
+    C_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
+
+    T_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": T_avg_p });
+    T_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
+
+    L_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": L_avg_p });
+    L_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
+
+    F_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": F_avg_p });
+    F_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
+
+    am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", C_team_pitch, "pitching_average", "#FFDC35"));
 });
 
-function pitch_bar_chart() {
-    am4core.ready(function () {
 
-        // Themes begin
-        am4core.useTheme(am4themes_animated);
-        // Themes end
-
-        // Create chart instance
-        var chart_pitch = am4core.create("all_pitch", am4charts.XYChart);
-        chart_pitch.svgContainer.htmlElement.style.height = "2000" + "px";
-        chart_pitch.svgContainer.htmlElement.style.width = "1000" + "px";
-        // Add data
-        chart_pitch.data = player_data;
-        var title = chart_pitch.titles.create();
-        title.text = "各球隊球員 防禦率(Earned Run Average)";
-        title.fontSize = 30;
-        title.marginBottom = 15;
-        // Create axes
-        var yAxis = chart_pitch.yAxes.push(new am4charts.CategoryAxis());
-        yAxis.dataFields.category = "p_name";
-        yAxis.renderer.grid.template.location = 0;
-        yAxis.renderer.labels.template.fontSize = 10;
-        yAxis.renderer.minGridDistance = 10;
-
-        var xAxis = chart_pitch.xAxes.push(new am4charts.ValueAxis());
-
-        // Create series
-        var series = chart_pitch.series.push(new am4charts.ColumnSeries());
-        series.dataFields.valueX = "ERA";
-        series.dataFields.categoryY = "p_name";
-        series.columns.template.tooltipText = "{categoryY}: [bold]{valueX}[/]";
-        series.columns.template.strokeWidth = 0;
-        series.columns.template.adapter.add("fill", function (fill, target) {
-            if (target.dataItem) {
-                switch (target.dataItem.dataContext.region) {
-                    ////"#005AB5" "#FF8000"  "#FFDC35"  "#9E0015" "#FF0000" "#6FB7B7"
-                    case "中信":
-                        //中信
-                        return "#FFDC35";
-                        break;
-                    case "統一":
-                        //統一
-                        return "#FF8000";
-                        break;
-                    case "樂天":
-                        //樂天
-                        return "#9E0015";
-                        break;
-                    case "味全":
-                        //味全
-                        return "#FF0000";
-                        break;
-                    case "富邦":
-                        //富邦
-                        return "#005AB5";
-                        break;
-                    case "AVG":
-                        return "#01B468";
-                        break;
-
-                }
-            }
-            return fill;
-        });
-
-        var axisBreaks = {};
-        var legendData = [];
-
-        // Add ranges
-        function addRange(label, start, end, color) {
-            var axisBreak = yAxis.axisBreaks.create();
-            axisBreak.startCategory = start;
-            axisBreak.endCategory = end;
-            axisBreak.breakSize = 1;
-            axisBreak.fillShape.disabled = true;
-            axisBreak.startLine.disabled = true;
-            axisBreak.endLine.disabled = true;
-            axisBreaks[label] = axisBreak;
-
-            legendData.push({ name: label, fill: color });
-        }
-
-        //規定範圍: 區段名稱，區段起始資料名稱，區段終點資料名稱
-        addRange("富邦悍將", F_end, F_start, "#005AB5");
-        addRange("統一獅", T_end, T_start, "#FF8000");
-        addRange("中信兄弟", C_end, C_start, "#FFDC35");
-        addRange("樂天桃猿", L_end, L_start, "#9E0015");
-        addRange("味全龍", W_end, W_start, "#FF0000");
-        //addRange("平均", "味全", "富邦", "#01B468");
-
-        chart_pitch.cursor = new am4charts.XYCursor();
-
-
-        var legend = new am4charts.Legend();
-        legend.position = "top";
-        legend.scrollable = true;
-        legend.valign = "top";
-        legend.reverseOrder = true;
-
-        chart_pitch.legend = legend;
-        legend.data = legendData;
-        legend.itemContainers.template.events.on("toggled", function (event) {
-            var name = event.target.dataItem.dataContext.name;
-            var axisBreak = axisBreaks[name];
-            if (event.target.isActive) {
-                axisBreak.animate({ property: "breakSize", to: 0 }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 500);
-
-                    }
-                })
-                series.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.hide(1000, 0, 0, ["valueX"]);
-                    }
-
-                })
-            }
-            else {
-                axisBreak.animate({ property: "breakSize", to: 1 }, 1000, am4core.ease.cubicOut);
-                yAxis.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000);
-                    }
-                })
-
-                series.dataItems.each(function (dataItem) {
-                    if (dataItem.dataContext.region == name) {
-                        dataItem.show(1000, 0, ["valueX"]);
-                    }
-                })
-            }
-        })
-
-
-    }); // end am4core.ready()
-};
-
-
-/*
-=========================================================================
-javascript for each team bar plot
-=========================================================================
-*/
 function creat_bar_chart(categorical_name, value_name, id_name, data, series_name, team_color) {
 
     // Themes begin
@@ -586,16 +336,39 @@ function creat_bar_chart(categorical_name, value_name, id_name, data, series_nam
     series.columns.template.adapter.add("fill", function (fill, target) {
         var avg_value = data[data.length - 1][value_name];
         var data_index = target.dataItem.index;
-        if (data[data_index][value_name] > avg_value) {
-            return team_color;
-        }
-        else {
-            if (data[data_index].p_name != "平均") {
-                return "#BBBBBB";
+        if (value_name == "BA") {
+            if (data[data_index][value_name] > avg_value) {
+                return team_color;
             }
             else {
-                return "#005500";
+                if (data[data_index].p_name == "中職平均") {
+                    return "#019858";
+                }
+                else if (data[data_index].p_name == "對內平均") {
+                    return "rgba(0, 133, 77, 0.3)";
+                }
+                else {
+                    return "#BBBBBB";
+                }
             }
+        }
+
+        else if (value_name == "ERA") {
+            if (data[data_index][value_name] < avg_value) {
+                return team_color;
+            }
+            else {
+                if (data[data_index].p_name == "中職平均") {
+                    return "#019858";
+                }
+                else if (data[data_index].p_name == "對內平均") {
+                    return "rgba(0, 133, 77, 0.3)";
+                }
+                else {
+                    return "#BBBBBB";
+                }
+            }
+
         }
 
     });
@@ -604,112 +377,98 @@ function creat_bar_chart(categorical_name, value_name, id_name, data, series_nam
     chart.cursor = new am4charts.XYCursor();
 }
 
-function creat_bar_chart2(categorical_name, value_name, id_name, data, series_name, team_color) {
 
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-
-    // Create chart instance
-    var chart2 = am4core.create(id_name, am4charts.XYChart);
-    chart2.scrollbarX = new am4core.Scrollbar();
-    // Add data
-    chart2.data = data;
-    chart2.svgContainer.htmlElement.style.height = "500" + "px";
-    chart2.svgContainer.htmlElement.style.width = "450" + "px";
-
-    // Create axes
-    var categoryAxis = chart2.xAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.dataFields.category = categorical_name;
-    categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.renderer.minGridDistance = 10;
-    categoryAxis.renderer.labels.template.horizontalCenter = "right";
-    categoryAxis.renderer.labels.template.verticalCenter = "middle";
-    categoryAxis.renderer.labels.template.rotation = 270;
-    categoryAxis.tooltip.disabled = true;
-    categoryAxis.renderer.minHeight = 110;
-
-    var valueAxis = chart2.yAxes.push(new am4charts.ValueAxis());
-    valueAxis.renderer.minWidth = 50;
-
-    // Create series
-    var series = chart2.series.push(new am4charts.ColumnSeries());
-    series.sequencedInterpolation = true;
-    series.dataFields.valueY = value_name;
-    series.dataFields.categoryX = categorical_name;
-    series.tooltipText = "{categoryX}: [bold]{valueY}[/]";
-    series.columns.template.strokeWidth = 0;
-
-    series.tooltip.pointerOrientation = "vertical";
-
-    series.columns.template.column.cornerRadiusTopLeft = 10;
-    series.columns.template.column.cornerRadiusTopRight = 10;
-    series.columns.template.column.fillOpacity = 0.8;
-
-    // on hover, make corner radiuses bigger
-    var hoverState = series.columns.template.column.states.create("hover");
-    hoverState.properties.cornerRadiusTopLeft = 0;
-    hoverState.properties.cornerRadiusTopRight = 0;
-    hoverState.properties.fillOpacity = 1;
-
-    series.columns.template.adapter.add("fill", function (fill, target) {
-        var avg_value = data[data.length - 1][value_name];
-        var data_index = target.dataItem.index;
-        if (data[data_index][value_name] < avg_value) {
-            return team_color;
-        }
-        else {
-            if (data[data_index].p_name != "平均") {
-                return "#BBBBBB";
-            }
-            else {
-                return "#005500";
-            }
-        }
-
-    });
-
-    // Cursor
-    chart2.cursor = new am4charts.XYCursor();
-}
-function team_bat_bar_chart(team_data) {
-    am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", team_data, "batting_average", "#FFDC35"));
-}
-function team_pitch_bar_chart(team_data) {
-    am4core.ready(creat_bar_chart2("p_name", "ERA", "team_pitch_bar_chart", team_data, "error_run_average", "#FFDC35"));
-}
 //根據上邊下拉式選單結果篩選隊伍資料
 let select = document.querySelector('#team-selector');
+let select2 = document.querySelector('#team-selector');
 select.addEventListener("click", selectFun);
+select2.addEventListener("click", selectFun2);
 function selectFun() {
     const switchValue = select.options[select.selectedIndex].value;
     switch (switchValue) {
         case "中信兄弟":
             am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", C_team_bat, "batting_average", "#FFDC35"));
-            //am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", C_team_p, "error_run_average", "#FFDC35"));
             break;
 
         case "統一獅":
             am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", T_team_bat, "batting_average", "#FF8000"));
-            //am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", T_team_p, "error_run_average", "#FF8000"));
             break;
 
         case "味全龍":
             am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", W_team_bat, "batting_average", "#FF0000"));
-            //am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", W_team_p, "error_run_average", "#FF0000"));
             break;
 
         case "樂天桃猿":
             am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", L_team_bat, "batting_average", "#9E0015"));
-            //am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", L_team_p, "error_run_average", "#9E0015"));
             break;
 
         case "富邦悍將":
             am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", F_team_bat, "batting_average", "#005AB5"));
-            //am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", F_team_p, "error_run_average", "#005AB5"));
             break;
     }
 };
+function selectFun2() {
+    const switchValue = select.options[select.selectedIndex].value;
+    switch (switchValue) {
+        case "中信兄弟":
+            am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", C_team_pitch, "error_run_average", "#FFDC35"));
+            break;
+
+        case "統一獅":
+            am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", T_team_pitch, "error_run_average", "#FF8000"));
+            break;
+
+        case "味全龍":
+            am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", W_team_pitch, "error_run_average", "#FF0000"));
+            break;
+
+        case "樂天桃猿":
+            am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", L_team_pitch, "error_run_average", "#9E0015"));
+            break;
+
+        case "富邦悍將":
+            am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", F_team_pitch, "error_run_average", "#005AB5"));
+            break;
+    }
+};
+
+
+var fielding_columns;
+var fielding_table_dataset = [];
+var field_w_table_dataset = [];
+var field_l_table_dataset = [];
+var field_t_table_dataset = [];
+var field_c_table_dataset = [];
+var field_f_table_dataset = [];
+
+var player_fielding_url = "../dataset/bar-chart/data/player_field.csv";
+d3.csv(player_fielding_url).then(data_field => {
+    fielding_columns = Object.keys(data_field[0]);
+    data_field.forEach(d => {
+        var temp = [];
+        fielding_columns.forEach(col => {
+            temp.push(d[col]);
+        });
+        fielding_table_dataset.push(temp);
+        if (d.Team_Name === "味全") {
+            field_w_table_dataset.push(temp);
+        }
+        else if (d.Team_Name === "統一") {
+            field_t_table_dataset.push(temp);
+        }
+        else if (d.Team_Name === "中信") {
+            field_c_table_dataset.push(temp);
+        }
+        else if (d.Team_Name === "樂天") {
+            field_l_table_dataset.push(temp);
+        }
+        else if (d.Team_Name === "富邦") {
+            field_f_table_dataset.push(temp);
+        }
+    });
+
+});
+
 
 
 /*
@@ -1422,7 +1181,6 @@ am5.ready(function () {
  for line chart
 ===============================================
 */
-
 // Load the dataset
 d3.csv('../dataset/line-chart/data/ranking.csv').then(data => {
     // Initial settings
@@ -1448,13 +1206,13 @@ d3.csv('../dataset/line-chart/data/ranking.csv').then(data => {
 
 // Define the SVG dimensions and margins 
 const line_margin = { top: 20, right: 20, bottom: 40, left: 20 };
-const line_width = 1400 - line_margin.left - line_margin.right;
+const line_width = 1800 - line_margin.left - line_margin.right;
 const line_height = 300 - line_margin.top - line_margin.bottom;
 
 // Create the SVG container
 const line_svg = d3.select('#line')
     .append('svg')
-    .attr('width', 1500)
+    .attr('width', 1800)
     .attr('height', 300)
     .append('g')
     .attr('transform', `translate(${line_margin.left}, ${line_margin.top})`);
@@ -1600,4 +1358,369 @@ const renderLine = (data) => {
 
 
 
+/*
+===================================================
+table data list (using google chart table)
+==================================================
+*/
 
+let tab_select = document.querySelector('#bat-team-selector');
+tab_select.addEventListener("change", tabFun_bat);
+function tabFun_bat() {
+    const switchValue = tab_select.options[tab_select.selectedIndex].value;
+    switch (switchValue) {
+        case "中信兄弟":
+            google.charts.setOnLoadCallback(drawTable_c);
+            break;
+
+        case "統一獅":
+            google.charts.setOnLoadCallback(drawTable_t);
+            break;
+
+        case "味全龍":
+            google.charts.setOnLoadCallback(drawTable_w);
+            break;
+
+        case "樂天桃猿":
+            google.charts.setOnLoadCallback(drawTable_l);
+            break;
+
+        case "富邦悍將":
+            google.charts.setOnLoadCallback(drawTable_f);
+            break;
+
+        case "全部":
+            google.charts.setOnLoadCallback(drawTable);
+            break;
+
+
+    }
+};
+google.charts.load('current', { packages: ['table'] });
+//google.charts.setOnLoadCallback(drawTable_bat);
+google.charts.setOnLoadCallback(drawTable);
+
+function drawTable() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+
+    data.addRows(batting_table_dataset);
+
+
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function drawTable_w() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+
+    data.addRows(bat_w_table_dataset);
+
+
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function drawTable_l() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(bat_l_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function drawTable_t() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(bat_t_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function drawTable_c() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(bat_c_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function drawTable_f() {
+    var data = new google.visualization.DataTable();
+
+    batching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(bat_f_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+
+
+
+let tab_select2 = document.querySelector('#pitch-team-selector');
+tab_select2.addEventListener("change", tabFun_pitch);
+function tabFun_pitch() {
+    const switchValue = tab_select2.options[tab_select2.selectedIndex].value;
+    switch (switchValue) {
+        case "中信兄弟":
+            google.charts.setOnLoadCallback(p_Table_c);
+            break;
+
+        case "統一獅":
+            google.charts.setOnLoadCallback(p_Table_t);
+            break;
+
+        case "味全龍":
+            google.charts.setOnLoadCallback(p_Table_w);
+            break;
+
+        case "樂天桃猿":
+            google.charts.setOnLoadCallback(p_Table_l);
+            break;
+
+        case "富邦悍將":
+            google.charts.setOnLoadCallback(p_Table_f);
+            break;
+
+        case "全部":
+            google.charts.setOnLoadCallback(p_Table);
+            break;
+
+
+    }
+};
+google.charts.load('current', { packages: ['table'] });
+//google.charts.setOnLoadCallback(drawTable_bat);
+google.charts.setOnLoadCallback(p_Table);
+
+function p_Table() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+
+    data.addRows(pitching_table_dataset);
+
+
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function p_Table_w() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(pitch_w_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function p_Table_l() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(pitch_l_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function p_Table_t() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(pitch_t_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function p_Table_c() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(pitch_c_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function p_Table_f() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(pitch_f_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_pitch'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+
+
+
+let tab_select3 = document.querySelector('#field-team-selector');
+tab_select3.addEventListener("change", tabFun_field);
+function tabFun_field() {
+    const switchValue = tab_select3.options[tab_select3.selectedIndex].value;
+    switch (switchValue) {
+        case "中信兄弟":
+            google.charts.setOnLoadCallback(f_Table_c);
+            break;
+
+        case "統一獅":
+            google.charts.setOnLoadCallback(f_Table_t);
+            break;
+
+        case "味全龍":
+            google.charts.setOnLoadCallback(f_Table_w);
+            break;
+
+        case "樂天桃猿":
+            google.charts.setOnLoadCallback(f_Table_l);
+            break;
+
+        case "富邦悍將":
+            google.charts.setOnLoadCallback(f_Table_f);
+            break;
+
+        case "全部":
+            google.charts.setOnLoadCallback(f_Table);
+            break;
+
+
+    }
+};
+
+
+google.charts.load('current', { packages: ['table'] });
+//google.charts.setOnLoadCallback(drawTable_bat);
+google.charts.setOnLoadCallback(f_Table);
+
+function f_Table() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(fielding_table_dataset);
+
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function f_Table_w() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(field_w_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function f_Table_l() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(field_l_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function f_Table_t() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(field_t_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function f_Table_c() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(field_c_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}
+function f_Table_f() {
+    var data = new google.visualization.DataTable();
+
+    pitching_columns.forEach(c => {
+        data.addColumn('string', c);
+    });
+
+    data.addRows(field_f_table_dataset);
+
+    var table = new google.visualization.Table(document.getElementById('table_div_field'));
+
+    table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+}

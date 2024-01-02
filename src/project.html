@@ -8,6 +8,7 @@
     <title> CPBL interface</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://unpkg.com/d3@5.16.0/dist/d3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -18,6 +19,7 @@
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 </head>
 
@@ -49,18 +51,16 @@
             <li><a href="#team" data-toggle="tab">Team</a>
             </li>
             <li><a href="#player" data-toggle="tab">Player</a>
-            </li>
-            <li><a href="#introduction" data-toggle="tab">Introduction</a>
-            </li>
+
         </ul>
         <div class="tab-content clearfix">
 
             <!-- 選紐一區塊-->
             <div class="tab-pane active" id="overview">
 
-                <div class="card">
-                    <header class="card-header">
-                        <p class="card-header-title"> Demo: Line Chart </p>
+                <div class="card" style="margin-top: 20px;">
+                    <header class="card-header" style="width: 25%;">
+                        <p class="card-header-title">球隊排名變化 </p>
                     </header>
                     <div class="card-content">
                         <!-- Dropdown menu for team selection -->
@@ -79,15 +79,17 @@
                             </span>
                         </div>
                         <!-- main diagram -->
-                        <div id="line"></div>
+                        <div class="df-ov">
+                            <div id="line"></div>
+                        </div>
                     </div>
                 </div>
 
 
                 <div style="margin: 20px; display: flex; flex-direction: row;">
-                    <div class="card" style="margin: 30px;">
+                    <div class="card" style="margin: 20px;">
                         <header class="card-header" style="width: 40%;">
-                            <p class="card-header-title"> Demo: Matrix Plot </p>
+                            <p class="card-header-title"> 主客場勝率變化 </p>
                         </header>
                         <div class="card-content" style="width: 40%;">
                             <!-- double range slider -->
@@ -118,7 +120,7 @@
 
                     <div class="card" style="margin: 20px;">
                         <header class="card-header" style="width: 40%;">
-                            <p class="card-header-title"> Demo: sunburst chart </p>
+                            <p class="card-header-title"> 各月份MVP </p>
                         </header>
                         <div class="card-content" style="width: 40%;">
                             <!-- double range slider -->
@@ -138,12 +140,11 @@
 
             <!-- 選紐二區塊-->
             <div class="tab-pane" id="team">
-                <h3> 球隊整體表現分析 (各隊伍各場次投打數據)</h3>
                 <!-- dot plot -->
-                <div>
+                <div style="margin-top: 20px;">
                     <div class="card">
                         <header class="card-header">
-                            <p class="card-header-title"> Demo: Dot Plot </p>
+                            <p class="card-header-title"> 隊伍投打分析 </p>
                         </header>
                         <div class="card-content">
                             <!-- main diagram -->
@@ -195,23 +196,22 @@
                     </div>
                 </div>
 
-                <div style="margin: 20px; display: flex; flex-direction: row;">
-                    <div class="card" style="margin: 20px;">
-                        <header class="card-header" style="width: 60%;">
-                            <p class="card-header-title"> Demo: team bat bar chart </p>
+                <div style="margin: 20px; display: flex; flex-direction: row; ">
+                    <div class="card" style="margin: 10px;">
+                        <header class="card-header" style="width: 40%;">
+                            <p class="card-header-title"> 各隊選手打擊率 </p>
                         </header>
-                        <div class="card-content" style="width: 60%;">
-                            <!-- main diagram -->
+                        <div class="card-content" style="width: 40%;">
                             <div id="team_bat_bar_chart"></div>
                         </div>
                     </div>
 
 
-                    <div class="card" style="margin: 30px;">
-                        <header class="card-header" style="width: 60%;">
-                            <p class="card-header-title"> Demo: team bat bar chart </p>
+                    <div class="card" style="margin: 10px;">
+                        <header class="card-header" style="width: 40%;">
+                            <p class="card-header-title"> 各隊選手防禦率 </p>
                         </header>
-                        <div class="card-content" style="width: 60%;">
+                        <div class="card-content" style="width: 40%;">
                             <div id="team_pitch_bar_chart"></div>
                         </div>
                     </div>
@@ -221,10 +221,8 @@
             <!-- 選紐三區塊-->
             <div class="tab-pane" id="player">
                 <!--標題-->
-                <h3>player infromation</h3>
-
                 <!--加入選單-->
-                <div id="exTab3" class="container">
+                <div id="exTab3" class="container" style="margin-top: 10px;">
                     <ul class="nav nav-pills">
                         <li class="active">
                             <a href="#bat" data-toggle="tab">batting</a>
@@ -239,33 +237,61 @@
                     </ul>
 
                     <div class="tab-content">
+
                         <div class="tab-pane active" id="bat">
                             <h3>各隊伍打者打擊表現</h3>
-                            <div id="all_bat"></div>
+                            <div class="fs-12" style="color: black;">
+                                <label for="bat-team-selector">Select Team:</label>
+                                <select id="bat-team-selector">
+                                    <option value="全部"> 所有隊伍 </option>
+                                    <option value="味全龍"> 味全龍 </option>
+                                    <option value="中信兄弟"> 中信兄弟 </option>
+                                    <option value="樂天桃猿"> 樂天桃猿 </option>
+                                    <option value="統一獅"> 統一獅 </option>
+                                    <option value="富邦悍將"> 富邦悍將 </option>
+                                </select>
+                            </div>
+                            <div id="table_div"></div>
+
                         </div>
 
                         <div class="tab-pane" id="pitch">
                             <h3>各隊伍投手投球表現</h3>
-                            <div id="all_pitch"></div>
+                            <div class="fs-12" style="color: black;">
+                                <label for="pitch-team-selector">Select Team:</label>
+                                <select id="pitch-team-selector">
+                                    <option value="全部"> 所有隊伍 </option>
+                                    <option value="味全龍"> 味全龍 </option>
+                                    <option value="中信兄弟"> 中信兄弟 </option>
+                                    <option value="樂天桃猿"> 樂天桃猿 </option>
+                                    <option value="統一獅"> 統一獅 </option>
+                                    <option value="富邦悍將"> 富邦悍將 </option>
+                                </select>
+                            </div>
+                            <div id="table_div_pitch"></div>
                         </div>
 
                         <div class="tab-pane" id="field">
                             <h3>各隊伍隊員防守表現</h3>
-                            <div></div>
+                            <div class="fs-12" style="color: black;">
+                                <label for="field-team-selector">Select Team:</label>
+                                <select id="field-team-selector">
+                                    <option value="全部"> 所有隊伍 </option>
+                                    <option value="味全龍"> 味全龍 </option>
+                                    <option value="中信兄弟"> 中信兄弟 </option>
+                                    <option value="樂天桃猿"> 樂天桃猿 </option>
+                                    <option value="統一獅"> 統一獅 </option>
+                                    <option value="富邦悍將"> 富邦悍將 </option>
+                                </select>
+                            </div>
+                            <div id="table_div_field"></div>
+
                         </div>
                     </div>
                 </div>
             </div><!-- end 選紐三區塊-->
 
-            <!-- 選紐四區塊-->
-            <div class="tab-pane" id="introduction">
-                <!--標題-->
-                <h3>Introduction</h3>
-                <!-- 先空出來有需要可以用 -->
 
-
-
-            </div>
 
 
 
@@ -276,11 +302,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-
-
-
 </body>
-<script src="sunburst/sunburst_chart.js"></script>
 <script src="project.js"></script>
 
 
