@@ -73,13 +73,28 @@ d3.csv(player_batting_url).then(data_bat => {
             var temp = [];
             batching_columns.forEach(col => {
                 if (col === 'H') {
-                    temp.push(String(d[col]));
+                    temp.push(d[col]);
                 }
                 else if (col === 'AB') {
-                    temp.push(String(d[col]));
+                    temp.push(d[col]);
                 }
                 else {
-                    temp.push(d[col]);
+                    if (col === 'ID') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Name') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Team_ID') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Team_Name') {
+                        temp.push(d[col]);
+                    }
+                    else {
+                        temp.push(+d[col]);
+                    }
+
                 }
 
             });
@@ -214,15 +229,29 @@ d3.csv(player_pitching_url).then(data_pitch => {
             var temp = [];
             pitching_columns.forEach(col => {
                 if (col === 'G') {
-                    temp.push(String(d[col]));
-                }
-                else if (col === 'ER') {
-                    temp.push(String(d[col]));
-                }
-                else {
                     temp.push(d[col]);
                 }
+                else if (col === 'ER') {
+                    temp.push(d[col]);
+                }
+                else {
+                    if (col === 'ID') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Name') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Team_ID') {
+                        temp.push(d[col]);
+                    }
+                    else if (col === 'Team_Name') {
+                        temp.push(d[col]);
+                    }
+                    else {
+                        temp.push(+d[col]);
+                    }
 
+                }
             });
             pitching_table_dataset.push(temp);
             if (d.Team_Name === "味全") {
@@ -439,12 +468,28 @@ var field_c_table_dataset = [];
 var field_f_table_dataset = [];
 
 var player_fielding_url = "../dataset/bar-chart/data/player_field.csv";
+// for team pitch bar chart
 d3.csv(player_fielding_url).then(data_field => {
     fielding_columns = Object.keys(data_field[0]);
     data_field.forEach(d => {
         var temp = [];
         fielding_columns.forEach(col => {
-            temp.push(d[col]);
+            if (col === 'ID') {
+                temp.push(d[col]);
+            }
+            else if (col === 'Name') {
+                temp.push(d[col]);
+            }
+            else if (col === 'Team_ID') {
+                temp.push(d[col]);
+            }
+            else if (col === 'Team_Name') {
+                temp.push(d[col]);
+            }
+            else {
+                temp.push(+d[col]);
+            }
+
         });
         fielding_table_dataset.push(temp);
         if (d.Team_Name === "味全") {
@@ -462,6 +507,8 @@ d3.csv(player_fielding_url).then(data_field => {
         else if (d.Team_Name === "富邦") {
             field_f_table_dataset.push(temp);
         }
+
+
     });
 
 });
@@ -1403,7 +1450,24 @@ function drawTable() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
     });
 
 
@@ -1419,9 +1483,25 @@ function drawTable_w() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
-    });
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
 
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
+    });
 
     data.addRows(bat_w_table_dataset);
 
@@ -1435,7 +1515,24 @@ function drawTable_l() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
     });
 
     data.addRows(bat_l_table_dataset);
@@ -1448,7 +1545,24 @@ function drawTable_t() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
     });
 
     data.addRows(bat_t_table_dataset);
@@ -1461,7 +1575,24 @@ function drawTable_c() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
     });
 
     data.addRows(bat_c_table_dataset);
@@ -1474,7 +1605,24 @@ function drawTable_f() {
     var data = new google.visualization.DataTable();
 
     batching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
+
     });
 
     data.addRows(bat_f_table_dataset);
@@ -1526,7 +1674,23 @@ function p_Table() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
 
@@ -1542,7 +1706,23 @@ function p_Table_w() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(pitch_w_table_dataset);
@@ -1555,7 +1735,23 @@ function p_Table_l() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(pitch_l_table_dataset);
@@ -1568,7 +1764,23 @@ function p_Table_t() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(pitch_t_table_dataset);
@@ -1581,7 +1793,23 @@ function p_Table_c() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(pitch_c_table_dataset);
@@ -1594,7 +1822,23 @@ function p_Table_f() {
     var data = new google.visualization.DataTable();
 
     pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(pitch_f_table_dataset);
@@ -1647,8 +1891,24 @@ google.charts.setOnLoadCallback(f_Table);
 function f_Table() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(fielding_table_dataset);
@@ -1661,8 +1921,24 @@ function f_Table() {
 function f_Table_w() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(field_w_table_dataset);
@@ -1674,8 +1950,24 @@ function f_Table_w() {
 function f_Table_l() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(field_l_table_dataset);
@@ -1687,8 +1979,24 @@ function f_Table_l() {
 function f_Table_t() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(field_t_table_dataset);
@@ -1700,8 +2008,24 @@ function f_Table_t() {
 function f_Table_c() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(field_c_table_dataset);
@@ -1713,8 +2037,24 @@ function f_Table_c() {
 function f_Table_f() {
     var data = new google.visualization.DataTable();
 
-    pitching_columns.forEach(c => {
-        data.addColumn('string', c);
+    fielding_columns.forEach(c => {
+        if (c === 'ID') {
+            data.addColumn('string', c);
+        }
+        else if (c === 'Name') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_ID') {
+            data.addColumn('string', c);
+        }
+
+        else if (c === 'Team_Name') {
+            data.addColumn('string', c);
+        }
+        else {
+            data.addColumn('number', c);
+        }
     });
 
     data.addRows(field_f_table_dataset);
