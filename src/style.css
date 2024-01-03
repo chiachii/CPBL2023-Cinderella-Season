@@ -351,6 +351,19 @@ css for template
     padding: 5px 15px;
 }
 
+/*
+為選中
+*/
+#exTab2 .nav-tabs>li>a {
+    border-radius: 0;
+    color: black;
+}
+
+#exTab2 .nav-tabs>li.active>a {
+    border-radius: 0;
+    color: #428bca;
+}
+
 #exTab2 h3 {
     color: white;
     background-color: #428bca;
@@ -368,6 +381,13 @@ css for template
 
 #exTab3 .nav-pills>li>a {
     border-radius: 4px 4px 0 0;
+    color: rgb(35, 35, 35);
+}
+
+#exTab3 .nav-pills>li.active>a {
+    border-radius: 4px 4px 0 0;
+    color: white;
+    background-color: #428bca;
 }
 
 #exTab3 .tab-content {

@@ -121,25 +121,22 @@ d3.csv(player_batting_url).then(data_bat => {
 
     CPBL_bat_avg = CPBL_bat_avg / (W_team_bat.length + L_team_bat.length + T_team_bat.length + C_team_bat.length + F_team_bat.length);
 
-    W_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": W_avg_b });
+    W_team_bat.push({ region: "AVG", p_name: "隊內平均", "BA": W_avg_b });
     W_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    C_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": C_avg_b });
+    C_team_bat.push({ region: "AVG", p_name: "隊內平均", "BA": C_avg_b });
     C_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    T_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": T_avg_b });
+    T_team_bat.push({ region: "AVG", p_name: "隊內平均", "BA": T_avg_b });
     T_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    L_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": L_avg_b });
+    L_team_bat.push({ region: "AVG", p_name: "隊內平均", "BA": L_avg_b });
     L_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
-    F_team_bat.push({ region: "AVG", p_name: "對內平均", "BA": F_avg_b });
+    F_team_bat.push({ region: "AVG", p_name: "隊內平均", "BA": F_avg_b });
     F_team_bat.push({ region: "AVG", p_name: "中職平均", "BA": CPBL_bat_avg });
 
     am4core.ready(creat_bar_chart("p_name", "BA", "team_bat_bar_chart", C_team_bat, "batting_average", "#FFDC35"));
-
-
-
 
 });
 
@@ -266,19 +263,19 @@ d3.csv(player_pitching_url).then(data_pitch => {
     CPBL_pitch_avg = CPBL_pitch_avg / (W_team_pitch.length + L_team_pitch.length + T_team_pitch.length + C_team_pitch.length + F_team_pitch.length);
 
 
-    W_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": W_avg_p });
+    W_team_pitch.push({ region: "AVG", p_name: "隊內平均", "ERA": W_avg_p });
     W_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
-    C_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": C_avg_p });
+    C_team_pitch.push({ region: "AVG", p_name: "隊內平均", "ERA": C_avg_p });
     C_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
-    T_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": T_avg_p });
+    T_team_pitch.push({ region: "AVG", p_name: "隊內平均", "ERA": T_avg_p });
     T_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
-    L_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": L_avg_p });
+    L_team_pitch.push({ region: "AVG", p_name: "隊內平均", "ERA": L_avg_p });
     L_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
-    F_team_pitch.push({ region: "AVG", p_name: "對內平均", "ERA": F_avg_p });
+    F_team_pitch.push({ region: "AVG", p_name: "隊內平均", "ERA": F_avg_p });
     F_team_pitch.push({ region: "AVG", p_name: "中職平均", "ERA": CPBL_pitch_avg });
 
     am4core.ready(creat_bar_chart("p_name", "ERA", "team_pitch_bar_chart", C_team_pitch, "pitching_average", "#FFDC35"));
@@ -611,7 +608,7 @@ function showTooltip(data, elem) {
         .style('border-radius', '4px')
         .style('padding', '10px')
         .style('display', 'none')
-        .style('font-size', '0.85rem');
+        .style('font-size', '1.5rem');
 
     // Show the tooltip
     tooltip.style('left', (event.pageX + 10) + 'px')
@@ -812,7 +809,7 @@ const renderMatrix = (data) => {
         .style('border-radius', '4px')
         .style('padding', '10px')
         .style('display', 'none')
-        .style('font-size', '0.85rem');
+        .style('font-size', '1.5rem');
 
     // Diagonal: add team logo
     const translate = { '中信兄弟': 'brothers', '樂天桃猿': 'rakuten', '統一獅': 'unilions', '味全龍': 'dragons', '富邦悍將': 'fubon' }
@@ -1014,6 +1011,8 @@ am5.ready(function () {
     // Create root element
     // https://www.amcharts.com/docs/v5/getting-started/#Root_element
     var root = am5.Root.new("sunburst");
+    root.dom.style.height = "500px";
+    root.dom.style.width = "450px"
 
 
     // Set themes
@@ -1153,7 +1152,7 @@ am5.ready(function () {
                         text: " ",
                         children: [
                             { name: "4月", value: 1, text: text_line + "\n[bold]鋼龍 [\]\n* 出賽數: 5\n* 投球局數: 31\n* 被安打: 28\n* 四壞: 2\n* 三振: 32\n* 失分: 10\n* 自責分: 10\n* 防禦率: 2.90", text_color: "#FF0000", nodeSettings: { fill: am5.color(0xED2C2C) }, },
-                            { name: "7月", value: 1, text: text_line + "\n[bold]錡龍 [\]\n* 出賽數: 2 投球局數: 12\n* 被安打: 9\n* 四壞: 3\n* 三振: 6\n* 失分: 3\n* 自責分: 3\n* 防禦率: 2.25", text_color: "#FF0000", nodeSettings: { fill: am5.color(0xED2C2C) }, },
+                            { name: "7月", value: 1, text: text_line + "\n[bold]錡龍 [\]\n* 出賽數: 2 \n投球局數: 12\n* 被安打: 9\n* 四壞: 3\n* 三振: 6\n* 失分: 3\n* 自責分: 3\n* 防禦率: 2.25", text_color: "#FF0000", nodeSettings: { fill: am5.color(0xED2C2C) }, },
                         ]
                     },
                 ]
