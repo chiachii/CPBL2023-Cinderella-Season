@@ -662,15 +662,15 @@ function showTooltip(data, elem) {
         .style('top', (event.pageY - 25) + 'px')
         .style('display', 'block')
         .html(`
-            <div style="text-align: center;">
+            <div style="text-align: center; font-size: 15px; background-color: #EEEEEE;">
                 <strong style="color:${'#1b53c0'};"> ${data.team} </strong>
             </div>
-            <hr />
-            <strong style="color:${'#3C3C3C'}; font-size:12px"> Session: </strong> ${(+data.session)}
+            
+            <strong style="color:${'#3C3C3C'}; font-size:15px"> Session: </strong> ${(+data.session)}
             <br>
-            <strong style="color:${'#3C3C3C'}; font-size:12px"> BA: </strong> ${(+data.BA).toFixed(2)}
+            <strong style="color:${'#3C3C3C'}; font-size:15px"> BA: </strong> ${(+data.BA).toFixed(2)}
             <br>
-            <strong style="color:${'#3C3C3C'}; font-size:12px"> ERA: </strong> ${(+data.ERA).toFixed(2)}
+            <strong style="color:${'#3C3C3C'}; font-size:15px"> ERA: </strong> ${(+data.ERA).toFixed(2)}
         `);
 };
 
@@ -873,10 +873,10 @@ const renderMatrix = (data) => {
                 .style('top', (event.pageY - 25) + 'px')
                 .style('display', 'block')
                 .html(`
-                        <div style="text-align: center;">
+                        <div style="text-align: center; background-color: #EFEFEF">
                             <strong style="color:${'#1b53c0'};"> ${d.x} </strong>
                         </div>
-                        <hr />
+                        
                         <div id="home-chart" style="display: inline-flex; flex-wrap: wrap;"></div>
                         <div id="away-chart" style="display: inline-flex; flex-wrap: wrap;"></div>
                     `);
@@ -1022,23 +1022,23 @@ function generateBarChart(selector, win, draw, lose, label) {
         .attr('x', (d, i) => i * barWidth + barWidth / 2)
         .attr('y', d => height - d * height + 20)
         .attr('text-anchor', 'middle')
-        .attr('font-size', 11)
+        .attr('font-size', 12)
         .text(d => `${(d * 100).toFixed(0)}%`);
 
     svg.append('text')
         .attr('x', width / 2)
-        .attr('y', 8)
+        .attr('y', 15)
         .attr('text-anchor', 'middle')
         .attr('fill', label === 'Home Game' ? '#35b8ad' : '#db5046')
         .attr('font-weight', 'bold')
-        .attr('font-size', 11)
+        .attr('font-size', 14)
         .text(label);
 
     svg.selectAll('x-axis-label')
         .data(['Win', 'Draw', 'Lose'])
         .enter()
         .append('text')
-        .attr('font-size', 11)
+        .attr('font-size', 12)
         .attr('x', (d, i) => i * barWidth + 15)
         .attr('y', height + 35)
         .attr('text-anchor', 'middle')
